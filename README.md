@@ -13,15 +13,6 @@ They are, however, only guidelines. Use best judgment when determining whether t
 
 Prefer binding user interactions to commands rather than methods.
 
-
-__Don't__
-
-    // In Xaml (using Caliburn Micro based convention)
-    <Button x:Name="Delete" .../>
-
-    // In class
-    public void Delete() {...}
-
 __Do__
 
     // In Xaml
@@ -37,7 +28,14 @@ __Do__
     // In class
     public IObservable<Unit> Delete() {...}
 
-    
+__Don't__
+
+    // In Xaml (using Caliburn Micro based convention)
+    <Button x:Name="Delete" .../>
+
+    // In class
+    public void Delete() {...}
+
 This provides multiple benefits.
 
 1. We can bind to the `CanExecute` property of the command to disable/enable buttons.
@@ -49,20 +47,21 @@ This provides multiple benefits.
 
 Always make sure to update the UI on the `RxApp.DeferredScheduler` to ensure UI changes happen on the UI thread. In practice, this typically means making sure to update view models on the deferred scheduler.
 
-__Don't__
-
-    .FetchStuffAsync()
-    .Subscribe(x => this.SomeViewModelProperty = x);
-
 __Do__
 
     .FetchStuffAsync()
     .ObserveOn(RxApp.DeferredScheduler)
     .Subscribe(x => this.SomeViewModelProperty = x);
 
+__Don't__
+
+    .FetchStuffAsync()
+    .Subscribe(x => this.SomeViewModelProperty = x);
+
+
 Even better, pass in the scheduler to methods that take one in.
 
-__Do__
+__Better__
 
     .FetchStuffAsync(RxApp.DeferredScheduler)
     .Subscribe(x => this.SomeViewModelProperty = x);
@@ -70,13 +69,6 @@ __Do__
 
 ### Prefer Observable Properties Helpers to setting properties explicitly
 When a property's value depends on another property or observable sequence, rather than set the value explicitly, use `ObservableAsPropertyHelper` with `ObservableForProperty` or `WhenAny` wherever possible.
-
-
-__Don't__
-
-    .FetchStuffAsync()
-    .ObserveOn(RxApp.DeferredScheduler)
-    .Subscribe(x => this.SomeViewModelProperty = x);
 
 __Do__
 
@@ -97,6 +89,13 @@ __Do__
             return someViewModelProperty.Value;
         }
     }
+
+__Don't__
+
+    .FetchStuffAsync()
+    .ObserveOn(RxApp.DeferredScheduler)
+    .Subscribe(x => this.SomeViewModelProperty = x);
+
 
 Use `WhenAny` when creating a property dependent on more than one property.
 
