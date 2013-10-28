@@ -97,22 +97,22 @@ observable sequence, rather than set the value explicitly, use
 __Do__
 
 ```csharp
-// Class member
-ObservableAsPropertyHelper<bool> canDoIt;
-
-// In ctor
-someViewModelProperty = this.WhenAny(x => x.StuffFetched, y => 
-y.OtherStuffNotBusy, (x, y) => x && y)
-    .ToProperty(this, x => x.CanDoIt, setViaReflection: false);
-
-
-// Property definition
-public bool CanDoIt
+public class RepositoryViewModel : ViewModelBase 
 {
-    get
-    {
-        return canDoIt.Value;
-    }
+  ObservableAsPropertyHelper<bool> canDoIt;
+
+  public RepositoryViewModel() 
+  {
+    someViewModelProperty = this.WhenAny(x => x.StuffFetched, 
+									 y => y.OtherStuffNotBusy, 
+									 (x, y) => x && y)
+      .ToProperty(this, x => x.CanDoIt, setViaReflection: false);
+  }
+
+  public bool CanDoIt
+  {
+    get { return canDoIt.Value; }  
+  }	
 }
 ```
 
