@@ -19,7 +19,7 @@ Prefer binding user interactions to commands rather than methods.
 __Do__
 
 ```csharp
-// In Xaml
+// In XAML
 <Button Command="{Binding DeleteCommand}" .../>
 
 // In ctor
@@ -35,21 +35,24 @@ public IObservable<Unit> Delete() {...}
 
 __Don't__
 
+Use the Caliburn.Micro conventions for associating buttons and commands:
+
 ```csharp
-// In Xaml (using Caliburn Micro based convention)
+// In XAML
 <Button x:Name="Delete" .../>
 
-// In class
-public void Delete() {...}
+public class RepositoryViewModel : PropertyChangedBase
+{
+  public void Delete() {...}	
+}
 ```
 
-This provides multiple benefits.
+Why? 
 
-1. We can bind to the `CanExecute` property of the command to disable/enable 
-buttons.
+1. We can bind to the `CanExecute` property of the command to introduce additional
+behaviour.
 2. It handles marshaling the result back to the UI thread.
 3. It tracks in-flight items.
-
 
 ### UI Thread and Schedulers
 
