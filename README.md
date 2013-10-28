@@ -22,15 +22,21 @@ __Do__
 // In XAML
 <Button Command="{Binding DeleteCommand}" .../>
 
-// In ctor
-DeleteCommand = new ReactiveAsyncCommand();
-DeleteCommand.RegisterAsyncObservable(
-    x => Delete(),  
-    e => /* Do something with error */)
-.Subscribe();
+public class RepositoryViewModel : ViewModelBase 
+{
+  public RepositoryViewModel() 
+  {
+    DeleteCommand = new ReactiveAsyncCommand();
+    DeleteCommand.RegisterAsyncObservable(
+      x => Delete(),  
+      e => /* Do something with error */)
+    .Subscribe();
+  }
 
-// In class
-public IObservable<Unit> Delete() {...}
+  public ReactiveAsyncCommand DeleteCommand { get; private set; }
+
+  public IObservable<Unit> Delete() {...}
+}
 ```
 
 __Don't__
