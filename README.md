@@ -159,6 +159,8 @@ repoData.Owner };
 
 __Don't__
 
+Store arbitrary objects graphs:
+
 ```csharp
 var repoViewModel = GetRepository(name);
 IBlobCache cache = GetCache(...);
@@ -168,9 +170,9 @@ cache.InsertObject<RepositoryData>(repoViewModel);
 var repoViewModel = await cache.GetObjectAsync<RepositoryViewModel>();
 ```
 
-Even better, we should have helper methods for doing this.
-
 __Better__
+
+We should have helper methods for doing this:
 
 ```csharp
 var repoViewModel = GetRepository(name);
