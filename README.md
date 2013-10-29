@@ -55,8 +55,8 @@ public class RepositoryViewModel : PropertyChangedBase
 
 Why? 
 
-1. We can bind to the `CanExecute` property of the command to introduce additional
-behaviour.
+1. ReactiveAsyncCommand exposes the `CanExecute` property of the command to 
+enable applications to introduce additional behaviour.
 2. It handles marshaling the result back to the UI thread.
 3. It tracks in-flight items.
 
@@ -172,7 +172,7 @@ var repoViewModel = await cache.GetObjectAsync<RepositoryViewModel>();
 
 __Better__
 
-We should have helper methods for doing this:
+Akavache should have helper methods for doing this:
 
 ```csharp
 var repoViewModel = GetRepository(name);
