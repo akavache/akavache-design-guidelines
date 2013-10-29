@@ -89,9 +89,10 @@ __Better__
 .Subscribe(x => this.SomeViewModelProperty = x);
 ```
 
-### Prefer Observable Properties Helpers to setting properties explicitly
-When a property's value depends on another property, set of properties, or an 
-observable sequence, rather than set the value explicitly, use 
+### Prefer Observable Property Helpers to setting properties explicitly
+
+When a property's value depends on another property, a set of properties, or an 
+observable stream, rather than set the value explicitly, use 
 `ObservableAsPropertyHelper` with `WhenAny` wherever possible.
 
 __Do__
