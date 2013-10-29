@@ -19,37 +19,46 @@ Prefer binding user interactions to commands rather than methods.
 __Do__
 
 ```csharp
-// In Xaml
+// In XAML
 <Button Command="{Binding DeleteCommand}" .../>
 
-// In ctor
-DeleteCommand = new ReactiveAsyncCommand();
-DeleteCommand.RegisterAsyncObservable(
-    x => Delete(),  
-    e => /* Do something with error */)
-.Subscribe();
+public class RepositoryViewModel : ViewModelBase 
+{
+  public RepositoryViewModel() 
+  {
+    DeleteCommand = new ReactiveAsyncCommand();
+    DeleteCommand.RegisterAsyncObservable(
+      x => Delete(),  
+      e => /* Do something with error */)
+    .Subscribe();
+  }
 
-// In class
-public IObservable<Unit> Delete() {...}
+  public ReactiveAsyncCommand DeleteCommand { get; private set; }
+
+  public IObservable<Unit> Delete() {...}
+}
 ```
 
 __Don't__
 
+Use the Caliburn.Micro conventions for associating buttons and commands:
+
 ```csharp
-// In Xaml (using Caliburn Micro based convention)
+// In XAML
 <Button x:Name="Delete" .../>
 
-// In class
-public void Delete() {...}
+public class RepositoryViewModel : PropertyChangedBase
+{
+  public void Delete() {...}	
+}
 ```
 
-This provides multiple benefits.
+Why? 
 
-1. We can bind to the `CanExecute` property of the command to disable/enable 
-buttons.
+1. ReactiveAsyncCommand exposes the `CanExecute` property of the command to 
+enable applications to introduce additional behaviour.
 2. It handles marshaling the result back to the UI thread.
 3. It tracks in-flight items.
-
 
 ### UI Thread and Schedulers
 
@@ -80,30 +89,31 @@ __Better__
 .Subscribe(x => this.SomeViewModelProperty = x);
 ```
 
-### Prefer Observable Properties Helpers to setting properties explicitly
-When a property's value depends on another property, set of properties, or an 
-observable sequence, rather than set the value explicitly, use 
+### Prefer Observable Property Helpers to setting properties explicitly
+
+When a property's value depends on another property, a set of properties, or an 
+observable stream, rather than set the value explicitly, use 
 `ObservableAsPropertyHelper` with `WhenAny` wherever possible.
 
 __Do__
 
 ```csharp
-// Class member
-ObservableAsPropertyHelper<bool> canDoIt;
-
-// In ctor
-someViewModelProperty = this.WhenAny(x => x.StuffFetched, y => 
-y.OtherStuffNotBusy, (x, y) => x && y)
-    .ToProperty(this, x => x.CanDoIt, setViaReflection: false);
-
-
-// Property definition
-public bool CanDoIt
+public class RepositoryViewModel : ViewModelBase 
 {
-    get
-    {
-        return canDoIt.Value;
-    }
+  ObservableAsPropertyHelper<bool> canDoIt;
+
+  public RepositoryViewModel() 
+  {
+    someViewModelProperty = this.WhenAny(x => x.StuffFetched, 
+									 y => y.OtherStuffNotBusy, 
+									 (x, y) => x && y)
+      .ToProperty(this, x => x.CanDoIt, setViaReflection: false);
+  }
+
+  public bool CanDoIt
+  {
+    get { return canDoIt.Value; }  
+  }	
 }
 ```
 
@@ -137,7 +147,7 @@ public class RepositoryData
 
 var repoViewModel = GetRepository(name);
 var repositoryData = new RepositoryData { Name = repoViewModel.Name, Owner = 
-repoViewModel };
+repoViewModel.Owner };
 
 IBlobCache cache = GetCache(...);
 cache.InsertObject<RepositoryData>(repositoryData);
@@ -150,6 +160,8 @@ repoData.Owner };
 
 __Don't__
 
+Store arbitrary objects graphs:
+
 ```csharp
 var repoViewModel = GetRepository(name);
 IBlobCache cache = GetCache(...);
@@ -159,9 +171,9 @@ cache.InsertObject<RepositoryData>(repoViewModel);
 var repoViewModel = await cache.GetObjectAsync<RepositoryViewModel>();
 ```
 
-Even better, we should have helper methods for doing this.
-
 __Better__
+
+Akavache should have helper methods for doing this:
 
 ```csharp
 var repoViewModel = GetRepository(name);
