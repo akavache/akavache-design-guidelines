@@ -146,7 +146,7 @@ public class RepositoryData
 
 var repoViewModel = GetRepository(name);
 var repositoryData = new RepositoryData { Name = repoViewModel.Name, Owner = 
-repoViewModel };
+repoViewModel.Owner };
 
 IBlobCache cache = GetCache(...);
 cache.InsertObject<RepositoryData>(repositoryData);
