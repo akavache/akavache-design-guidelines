@@ -125,6 +125,46 @@ __Don't__
 .Subscribe(x => this.SomeViewModelProperty = x);
 ```
 
+### Prefer using `this` as the left hand side of a `WhenAny` call.
+
+__Do__
+
+```csharp
+IDependency dependency;
+public IDependency Dependency
+{
+  get { return this.dependency; }
+  set { this.RaiseAndSetIfChanged(ref dependency, value); }
+}
+
+IObservableAsPropertyHelper<IStuff> stuff;
+
+public IStuff Stuff
+{
+  get { return this.stuff.Value; }
+}
+
+public class MyViewModel(IDependency dependency)
+{
+  Ensure.ArgumentNotNull(dependency, "dependency");
+  
+  this.Dependency = dependency;
+  
+  this.stuff = this.WhenAny(x => x.Dependency.Stuff, x => x.Value)
+    .ToProperty(this, x => x.Stuff);
+}
+```
+
+__Don't__
+
+```csharp
+public class MyViewModel(IDependency dependency)
+{
+  stuff = dependency.WhenAny(x => x.Stuff, x => x.Value)
+    .ToProperty(this, x => x.Stuff);
+}
+```
+
 ## Akavache
 
 Ok, so I lied. This isn't just about RxUI. Here are some guidelines for 
