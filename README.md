@@ -60,6 +60,23 @@ enable applications to introduce additional behaviour.
 2. It handles marshaling the result back to the UI thread.
 3. It tracks in-flight items.
 
+
+#### Command Names
+
+Suffix `ReactiveCommand` properties' names with `Command`, e.g.:
+
+```csharp
+	
+public IReactiveCommand SynchronizeCommand { get; private set; }
+
+// and then in the ctor:
+
+SynchronizeCommand = new ReactiveCommand();
+SynchronizeCommand.RegisterAsync(_ => Synchronize(mergeInsteadOfRebase: !IsAhead))
+    .Subscribe();
+
+```
+
 ### UI Thread and Schedulers
 
 Always make sure to update the UI on the `RxApp.DeferredScheduler` to ensure UI 
