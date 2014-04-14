@@ -63,19 +63,21 @@ enable applications to introduce additional behaviour.
 
 #### Command Names
 
-Suffix `ReactiveCommand` properties' names with `Command`, e.g.:
+Don't suffix `ReactiveCommand` properties' names with `Command`; instead, name the property using a verb that describes the command's action. For example:
 
 ```csharp
 	
-public IReactiveCommand SynchronizeCommand { get; private set; }
+public IReactiveCommand Synchronize { get; private set; }
 
 // and then in the ctor:
 
-SynchronizeCommand = new ReactiveCommand();
-SynchronizeCommand.RegisterAsync(_ => Synchronize(mergeInsteadOfRebase: !IsAhead))
+Synchronize = new ReactiveCommand();
+Synchronize.RegisterAsync(_ => SynchronizeImpl(mergeInsteadOfRebase: !IsAhead))
     .Subscribe();
 
 ```
+
+When a `ReactiveCommand`'s implementation is too large or too complex for an anonymous delegate, name the implementation's method the same name as the command, but with `Impl` suffixed (for example, `SychronizeImpl` above).
 
 ### UI Thread and Schedulers
 
