@@ -60,6 +60,25 @@ enable applications to introduce additional behaviour.
 2. It handles marshaling the result back to the UI thread.
 3. It tracks in-flight items.
 
+
+#### Command Names
+
+Don't suffix `ReactiveCommand` properties' names with `Command`; instead, name the property using a verb that describes the command's action. For example:
+
+```csharp
+	
+public IReactiveCommand Synchronize { get; private set; }
+
+// and then in the ctor:
+
+Synchronize = new ReactiveCommand();
+Synchronize.RegisterAsync(_ => SynchronizeImpl(mergeInsteadOfRebase: !IsAhead))
+    .Subscribe();
+
+```
+
+When a `ReactiveCommand`'s implementation is too large or too complex for an anonymous delegate, name the implementation's method the same name as the command, but with `Impl` suffixed (for example, `SychronizeImpl` above).
+
 ### UI Thread and Schedulers
 
 Always make sure to update the UI on the `RxApp.DeferredScheduler` to ensure UI 
